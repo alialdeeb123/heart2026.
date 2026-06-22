@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>احتفال جروب الدفعة</title>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial;
+  text-align: center;
+}
+
+canvas {
+  display: block;
+}
+
+#text {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  color: white;
+  font-size: 28px;
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: fadeIn 3s ease forwards;
+  animation-delay: 3s;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+#btn {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background: red;
+  color: white;
+  border: none;
+  font-size: 18px;
+  border-radius: 8px;
+}
+</style>
+
+</head>
+
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="text">
+🎉 جروب الدفعة 2026 🎉 <br>
+أول جروب جمع كل الطلبة ❤️ <br>
+وكل سنة وإحنا أقوى 💪🔥
+</div>
+
+<button id="btn" onclick="share()">📢 شارك الجروب</button>
+
+<audio id="music" autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+let scale = 15;
+let beat = 0;
+
+// معادلة القلب
+function heart(t) {
+  let x = 16 * Math.pow(Math.sin(t), 3);
+  let y = 13 * Math.cos(t) - 5 * Math.cos(2*t)
+        - 2 * Math.cos(3*t) - Math.cos(4*t);
+  return {x, y};
+}
+
+// إنشاء particles
+for (let i = 0; i < 2000; i++) {
+  let t = Math.random() * Math.PI * 2;
+  let pos = heart(t);
+
+  particles.push({
+    x: canvas.width/2,
+    y: canvas.height/2,
+    tx: canvas.width/2 + pos.x * scale,
+    ty: canvas.height/2 - pos.y * scale,
+    size: Math.random() * 2 + 1
+  });
+}
+
+function animate() {
+  ctx.fillStyle = "rgba(0,0,0,0.15)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  beat = Math.sin(Date.now() * 0.005) * 2;
+
+  particles.forEach(p => {
+    p.x += (p.tx - p.x) * 0.05;
+    p.y += (p.ty - p.y) * 0.05;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size + beat, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,100,150,0.9)";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "pink";
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// زرار المشاركة
+function share() {
+  if (navigator.share) {
+    navigator.share({
+      title: "جروب الدفعة 2026",
+      text: "انضم لأكبر جروب في الدفعة 🔥",
+      url: "https://chat.whatsapp.com/PUT-YOUR-LINK"
+    });
+  } else {
+    alert("انسخ اللينك وابعته بنفسك 👍");
+  }
+}
+</script>
+
+</body>
+</html>
